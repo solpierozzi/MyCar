@@ -76,10 +76,10 @@
                     <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on" @click="editItem(selected[0])">
                         <v-icon>mdi-pencil</v-icon>
                     </v-btn>
-                    <v-btn color="error" dark class="mb-2" v-bind="attrs" v-on="on" @click="deleteItem(selected)">
+                    <v-btn ref="myError" color="error" dark class="mb-2" v-bind="attrs" v-on="on" @click="deleteItem(selected)">
                         <v-icon>mdi-delete</v-icon>
                     </v-btn>
-                    <v-dialog v-model="dialog" max-width="500px" persistent>
+                    <v-dialog scrollTop="scrollTop" ref="myModel" v-model="dialog" max-width="500px" persistent >
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
                                 <v-icon>mdi-plus</v-icon>
@@ -302,6 +302,7 @@ import axios from "axios"
 import urlAPI from "../config/config.js"
 export default {
     data: () => ({
+        scrollTop: 0,
         selected: [],
         toggle_none1: null,
         disponibles: "0",
@@ -522,6 +523,16 @@ export default {
                     this.dialog = true
                 }
             }
+
+            this.$nextTick(() => {
+                var myModel = this.$refs["v-dialog__container"]
+                console.log(this.$refs.form)
+                this.$refs.form.resetValidation()
+            })
+         
+            
+            //this.$refs.form.resetValidation()
+            
         },
         deleteItem(items) {
             if (!this.mensajeNoSelecciono()) {
@@ -597,13 +608,14 @@ export default {
             this.reglaEditarProveedor = [];
             this.reglaEditarVenta = [];
             this.reset();
+            this.$refs.form.resetValidation()
         },
         formatPrice(value) {
             return value == null ? "$0" : "$" + value;
         },
         closeDelete() {
-            this.dialogDelete = false
-            this.reset()
+            this.dialogDelete = false;
+            this.reset();
         },
         validate() {
             return this.$refs.form.validate()
@@ -829,7 +841,7 @@ export default {
 
         reiniciar() {
             this.close()
-            this.$refs.form.resetValidation()
+            //this.$refs.form.resetValidation()
         },
 
     },
