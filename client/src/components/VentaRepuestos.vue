@@ -5,7 +5,10 @@
             {{ format(item.BatchNum) }}
         </template>
         <template v-slot:item.Expiration="{ item }">
-            {{ format(item.Expiration) }}
+            {{ formatDate(item.Expiration) }}
+        </template>
+        <template v-slot:item.Product.SalePrice="{ item }">
+            {{ formatPrice(item.Product.SalePrice) }}
         </template>
         <template v-slot:[`item.actions`]="{ item }">
 
@@ -79,6 +82,7 @@ export default {
         ultimoEnCarrito: null,
         attrs: '',
         max: 0,
+        employee: null,
         cantidad: 0,
         dialogCantidad: false,
         headers: [{
@@ -123,13 +127,18 @@ export default {
         ],
         requerido: [
             value => {
-                const pattern = /^[0-9]{1,}$/
+                const pattern = /^[0-9]{1,}([,]{1}[0-9]{1,}){0,1}([.]{1}[0-9]{1,}){0,1}$/
                 return pattern.test(value) || 'Requerido.'
             },
             value => parseFloat(value) < 100 || 'El máximo es 100%!'
         ],
     }),
+
     created() {
+        let employee = localStorage.getItem("employee");
+        if(employee!=null){
+            this.employee = JSON.parse(employee);
+        }
         this.iniciar();
     },
     methods: {
@@ -153,7 +162,12 @@ export default {
             let cont = 0;
             await axios.get(urlAPI + "productStock")
                 .then(res => {
+                        
                     repuestos = res.data.productStock.filter(v => v.Status === "ACTIVE");
+                    if(this.employee!=null & this.employee.BranchOffice!=null){
+                        repuestos = repuestos.filter(r=> r.BranchOffice._id == this.employee.BranchOffice);
+                    }
+
                     if (repuestos != null) {
                         for (let i = 0; i < repuestos.length; i++) {
                             let item = JSON.parse(localStorage.getItem(String("r" + i)));
@@ -252,6 +266,17 @@ export default {
 
         format(value) {
             return value == null ? "S/D" : String(value);
+        },
+        formatDate(value) {
+            if (value == null) {
+                return "N/A";
+            }
+            value = String(value);
+            value = value.slice(0, 10);
+            return value;
+        },
+        formatPrice(value) {
+            return value == null ? "$0" : "$" + value;
         },
     },
 

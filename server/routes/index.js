@@ -19,12 +19,25 @@ const model = require('../controllers/model');
 const brand = require('../controllers/brand');
 const sell = require('../controllers/sell');
 const paymentType = require('../controllers/PaymentType');
+const factura = require('../controllers/factura');
+const monedas = require('../controllers/monedas');
+const documentation = require('../controllers/documentation');
+const deliveryVehicle = require('../controllers/deliveryVehicle');
+
+const paises = require('../controllers/paises');
+const provincias = require('../controllers/provincias');
+const localidades = require('../controllers/localidades');
 
 const category = require('../controllers/category');
 const subcategory = require('../controllers/subcategory');
 
 const controlStock = require('../controllers/controlStock');
-const Email = require('../lib/Email')
+
+const egreso = require('../controllers/egreso');
+const sueldos = require('../controllers/sueldos');
+const Email = require('../lib/Email');
+
+const pruebas = require('../controllers/pruebas');
 
 module.exports = app => {
     router.get('/', home.index);
@@ -50,6 +63,16 @@ module.exports = app => {
     router.post('/dealer/:dealer_id/update', dealer.update);
     router.delete('/dealer/:dealer_id/delete', dealer.remove);
     router.get('/dealer/:dealer_id', dealer.getOne);
+    
+    router.get('/documentation', documentation.index);
+    router.post('/documentation/add', documentation.create);
+    router.post('/documentation/:documentation_id/update', documentation.update);
+    router.delete('/documentation/:documentation_id/delete', documentation.remove);
+
+    router.get('/deliveryVehicle', deliveryVehicle.index);
+    router.post('/deliveryVehicle/add', deliveryVehicle.create);
+    router.post('/deliveryVehicle/:deliveryVehicle_id/update', deliveryVehicle.update);
+    router.delete('/deliveryVehicle/:deliveryVehicle_id/delete', deliveryVehicle.remove);
 
     router.get('/employee', employee.index);
     router.post('/employee/add', employee.create);
@@ -67,6 +90,17 @@ module.exports = app => {
     router.post('/brand/:brand_id/update', brand.update);
     router.delete('/brand/:brand_id/delete', brand.remove);
 
+    
+    router.get('/factura', factura.index);
+    router.post('/factura/add', factura.create);
+    router.post('/factura/:factura_id/update', factura.update);
+    router.delete('/factura/:factura_id/delete', factura.remove);
+    
+    
+    router.get('/monedas', monedas.index);
+    router.post('/monedas/add', monedas.create);
+    router.post('/monedas/:monedas_id/update', monedas.update);
+    router.delete('/monedas/:monedas_id/delete', monedas.remove);
     
     router.get('/category', category.index);
     router.post('/category/add', category.create);
@@ -94,6 +128,7 @@ module.exports = app => {
     router.post('/purchaseOrder/:purchaseOrder_id/update', purchaseOrder.update);
     router.delete('/purchaseOrder/:purchaseOrder_id/delete', purchaseOrder.remove);
     router.post('/purchaseOrder/:purchaseOrder_id/setArrival', purchaseOrder.setArrival);
+    router.post('/purchaseOrder/:purchaseOrder_id/setEstado', purchaseOrder.setEstado);
 
     
     router.get('/purchaseOrderV', purchaseOrderV.index);
@@ -101,6 +136,7 @@ module.exports = app => {
     router.post('/purchaseOrderV/:purchaseOrderV_id/update', purchaseOrderV.update);
     router.delete('/purchaseOrderV/:purchaseOrderV_id/delete', purchaseOrderV.remove);
     router.post('/purchaseOrderV/:purchaseOrderV_id/setArrival', purchaseOrderV.setArrival);
+    router.post('/purchaseOrderV/:purchaseOrderV_id/setEstado', purchaseOrderV.setEstado);
 
     router.get('/product', product.index);
     router.post('/product/add', product.create);
@@ -124,6 +160,8 @@ module.exports = app => {
     router.post('/reservation/checkHour', reservation.checkHour);
     
     router.post('/reservation/prueba', reservation.pruebas);
+
+    router.post('/prueba/sellproduct', pruebas.sellProduct);
 
     router.get('/remainder', remainder.index);
     router.post('/remainder/add', remainder.create);
@@ -153,6 +191,27 @@ module.exports = app => {
     router.post('/vehicleControl/:vehicleControl_id/delete', controlStock.removeCV);
     router.post('/vehicleControl/add', controlStock.createCV);
     
+    router.get('/paises', paises.index);
+    router.post('/paises/add', paises.create);
+    router.post('/paises/:paises_id/update', paises.update);
 
+    router.get('/provincias', provincias.index);
+    router.post('/provincias/add', provincias.create);
+    router.post('/provincias/:provincias_id/update', provincias.update);
+    
+    
+    router.get('/localidades', localidades.index);
+    router.post('/localidades/add', localidades.create);
+    router.post('/localidades/:localidades_id/update', localidades.update);
+ 
+    
+    router.get('/egreso', egreso.index);
+    router.post('/egreso/add', egreso.create);
+    router.post('/egreso/:egreso_id/update', egreso.update);
+
+    
+    router.get('/sueldos', sueldos.index);
+    router.post('/sueldos/add', sueldos.create);
+    router.post('/sueldos/:sueldos_id/update', sueldos.update);
     app.use(router);
 }
