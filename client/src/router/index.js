@@ -204,7 +204,7 @@ const routes = [
       import(/* webpackChunkName: "proveedores" */ "../views/Proveedores.vue"),
       meta: {
         title: 'Proveedores',
-        requiresAuth: true
+        requiresAuth: false
       }
   },
   {
