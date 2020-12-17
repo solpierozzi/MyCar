@@ -46,6 +46,13 @@
                     <v-list-item-title>Inicio</v-list-item-title>
                 </v-list-item>
 
+                <v-list-item :to="'/reportes'">
+                    <v-list-item-icon>
+                        <v-icon>mdi-chart-line</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Reportes</v-list-item-title>
+                </v-list-item>
+
                 <v-list-item v-if="validateUsers('Vendedor','Supervisor')" :to="'/clientes'">
                     <v-list-item-icon>
                         <v-icon>mdi-account</v-icon>
@@ -110,6 +117,14 @@
 
                 </v-list-group>
 
+                <v-list-item :to="'/proveedores'">
+                    <v-list-item-icon>
+                        <v-icon>mdi-package-variant</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Proveedores</v-list-item-title>
+                </v-list-item>
+
+
                 <v-list-item :to="'/servicios'">
                     <v-list-item-icon>
                         <v-icon>mdi-hammer-wrench</v-icon>
@@ -151,9 +166,9 @@
                   <v-list-item :to="'/egresos'">
                     <v-list-item-icon>
                         <v-icon>
-                           mdi-cash-minus</v-icon>
+                           mdi-cash</v-icon>
                     </v-list-item-icon>
-                    <v-list-item-title>Egresos</v-list-item-title>
+                    <v-list-item-title>Ingresos/Egresos</v-list-item-title>
                 </v-list-item>
                 
             

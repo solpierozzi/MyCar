@@ -3,7 +3,50 @@
     <div>
         <h1 class="text-center" style="background-color:DimGray;color:white">INGRESOS/EGRESOS {{fecha}}</h1>
         <h4 class="text-center" style="background-color:DimGray;color:white">ESTADO: {{caja}}</h4>
-        <v-data-table v-model="selected" :headers="headers" :items="movimientos" :search="search" item-key="_id" sort-by="Brand" class="elevation-1">
+        <template>
+            <v-expansion-panels>
+                <v-expansion-panel>
+                    <v-expansion-panel-header class="indigo darken-4 white--text">
+                        <template v-slot:actions>
+                            <v-icon color="white">
+                                $expand
+                            </v-icon>
+                        </template>
+                        Ver filtros Disponibles
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-container>
+                            <h2>Filtros</h2>
+                            <v-row>
+                                <v-col cols="12" md="6">
+                                    <v-select label="Tipo" v-model="filtros.Type" :items="['INGRESO','EGRESO']"></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select label="Responsable" v-model="filtros.Employee" :items="empleados" item-text="User" item-value="User"></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select label="Desde" v-model="filtros.Desde" :items="horarios"></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select label="Hasta" v-model="filtros.Hasta" :items="horarios"></v-select>
+                                </v-col>
+
+                                <v-col cols="12" sm="6" md="6">
+                                    <v-btn class="success" @click="aplicarFiltros">
+                                        <v-icon>mdi-check</v-icon>
+                                    </v-btn>
+                                    <v-btn class="warning" @click="reiniciarFiltros">
+                                        <v-icon>mdi-cancel</v-icon>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-expansion-panel-content>
+                </v-expansion-panel>
+            </v-expansion-panels>
+        </template>
+
+        <v-data-table v-model="selected" :headers="headers" :items="movimientos" :search="search" item-key="_id" sort-by="Type" class="elevation-1">
 
             <template v-slot:item.Date="{ item }">
                 {{ formatDate(item.Date) }}
@@ -21,12 +64,12 @@
                     <v-divider class="mx-4" dark vertical></v-divider>
                     <v-spacer></v-spacer>
 
-                    <div v-if="validateUsers('Administrativo') && caja=='CERRADA'">
-                        <v-btn color="success" dark class="mb-2" v-bind="attrs" v-on="on">
+                    <div v-if="validateUsers('Administrativo')">
+                        <v-btn v-if="caja=='CERRADA'" color="success" dark class="mb-2" v-bind="attrs" v-on="on" @click="mostrarDialog">
                             <v-icon>mdi-cash-lock-open</v-icon>
                         </v-btn>
 
-                        <v-btn v-if="caja=='ABIERTA'" color="error" dark class="mb-2" v-bind="attrs" v-on="on">
+                        <v-btn v-if="caja=='ABIERTA'" color="error" dark class="mb-2" v-bind="attrs" v-on="on" @click="mostrarDialog">
                             <v-icon>mdi-cash-lock</v-icon>
                         </v-btn>
 
@@ -46,6 +89,26 @@
             </template>
         </v-snackbar>
 
+        <v-dialog v-model="dialogMensaje" max-width="400px" persistent>
+            <v-card>
+                <v-card-text>
+                    <br>
+                    <h1 class="text-center">Confirmación</h1><br>
+                    <h3>{{mensaje}}</h3>
+                </v-card-text>
+                <v-card-actions>
+                    <v-flex class="text-right">
+                        <v-btn class="mb-2" @click="dialogMensaje=false;mensaje=''" color="info">
+                            <v-icon>mdi-cancel</v-icon>
+                        </v-btn>
+                        <v-btn class="mb-2" @click="cambiarCaja" color="info">
+                            <v-icon>mdi-check</v-icon>
+                        </v-btn>
+                    </v-flex>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
     </div>
 </v-img>
 </template>
@@ -55,27 +118,31 @@ import axios from "axios"
 import urlAPI from "../config/config.js"
 export default {
     data: () => ({
-        fecha: null,
+        fecha: "",
         caja: 'CERRADA',
         ordenesR: [],
         ordenesV: [],
         ventas: [],
+        horarios: [],
         dialogMensaje: false,
         mensaje: '',
-        nuevo: false,
-        valid: true,
-        dialogNuevo: false,
         snackbar: false,
-        dialogConfirm: false,
         titulo: '',
         menu: false,
+        filtros: {
+            Type: '',
+            Responsable: '',
+            Desde: '',
+            Hasta: ''
+        },
         selected: [],
         egresos: [],
         movimientos: [],
+        allMovimientos: [],
         search: '',
 
         headers: [{
-                text: 'Fecha y Hora',
+                text: 'Hora',
                 value: 'Date',
                 align: 'start',
             },
@@ -101,28 +168,80 @@ export default {
             },
         ],
         empleados: [],
+        branchOffice: null,
         editedIndex: -1,
         attrs: '',
         on: '',
         employee: null,
-        date: null
+        date: null,
+        ingresos: []
     }),
 
     created() {
-        let date = new Date()
-        this.fecha = date.getDate() + "-" + parseInt(date.getMonth() + 1) + "-" + parseInt(date.getYear() + 1900);
+        let dateString = new Date().toLocaleString("es-AR", {
+            timeZone: "America/Argentina/Buenos_Aires"
+        });
+        //16/12/2020 11:51:28 -> 16-12-2020 11:51:28
+        this.fecha = dateString.replaceAll("/", "-").slice(0, 10);
         let employee = localStorage.getItem("employee");
         employee = JSON.parse(employee);
         this.employee = employee;
-        this.branchOffice = employee != null & employee.BranchOffice != null ? employee.BranchOffice : "";
-        this.getegresos(this.branchOffice);
-        this.getCaja();
-        this.getOrdenes();
-        this.getVentas();
-        this.getEmpleados();
+        if (employee != null) {
+            this.getCaja();
+        }
     },
 
     methods: {
+        iniciar() {
+            this.getegresos();
+            this.getOrdenes();
+            this.getVentas();
+            this.getEmpleados();
+            this.getIngresos();
+            this.getHorarios();
+        },
+        aplicarFiltros() {
+            let desde = this.filtros.Desde != "";
+            let hasta = this.filtros.Hasta != "";
+            let responsable = this.filtros.Responsable != "";
+            let type = this.filtros.Type != "";
+
+            if (!desde && !hasta && !responsable && !type) {
+                return
+            }
+            this.movimientos = [];
+            let TypeMatches = true
+            let DesdeMatches = true
+            let HastaMatches = true
+            let ResponsableMatches = true
+            let repAux = []
+            let cant = 0
+            for (var i = 0; i < this.allMovimientos.length; i++) {
+                TypeMatches = type ? this.allMovimientos[i].Type === this.filtros.Type : TypeMatches
+                DesdeMatches = desde ? this.allMovimientos[i].Date.slice(11, 19) >= this.filtros.Desde : DesdeMatches
+                HastaMatches = hasta ? this.allMovimientos[i].Date.slice(11, 19) <= this.filtros.Hasta : HastaMatches
+                ResponsableMatches = responsable ? this.allMovimientos[i].Responsable === this.filtros.Responsable : ResponsableMatches
+
+                if (TypeMatches & DesdeMatches & HastaMatches & ResponsableMatches) {
+                    this.movimientos.push(this.allMovimientos[i]);
+                }
+            }
+        },
+
+        reiniciarFiltros() {
+            this.movimientos = this.allMovimientos;
+            this.filtros.Desde = "";
+            this.filtros.Hasta = "";
+            this.filtros.Responsable = "";
+            this.filtros.Type = "";
+        },
+
+        getHorarios() {
+            for (let i = 9; i < 23; i++) {
+                let hora = i < 10 ? "0" + i : i;
+                this.horarios.push(hora + ":00");
+            }
+        },
         validateUsers(...authorizedUsers) {
             if (localStorage.getItem('userType') != null) {
                 return (authorizedUsers.includes(localStorage.getItem('userType'))) ? true : false
@@ -130,29 +249,37 @@ export default {
             return false;
         },
 
-        
         getCaja() {
-            if (localStorage.getItem('caja') != null) {
-              this.caja = localStorage.getItem('caja');
-            }
-            else{
-                this.caja = 'CERRADA';
-                localStorage.setItem('caja','CERRADA');
-            }
+            axios.get(urlAPI + 'branchOffice').then(res => {
+                if (res != null) {
+                    let branchOffice = res.data.branchOffice;
+                    branchOffice = branchOffice.find(b => b._id == this.employee.BranchOffice);
+                    if (branchOffice != null) {
+                        if (branchOffice.Caja != null & branchOffice.Caja != "") {
+                            this.caja = branchOffice.Caja;
+                        }
+                        this.branchOffice = branchOffice;
+                        this.iniciar();
+                    }
+                }
+            })
         },
 
-        async getegresos(branchOffice) {
+        async getegresos() {
             await axios.get(urlAPI + 'egreso')
                 .then(res => {
                     this.egresos = [];
                     let egresos = res.data.egreso;
                     if (egresos != null) {
-                        if (branchOffice != "") {
+                        if (this.branchOffice != "") {
                             egresos.forEach(e => {
-                                if (e.BranchOffice == branchOffice && e.Status == "ACTIVE") {
+                                let date = String(e.Date).slice(0, 10);;
+
+                                if (e.BranchOffice == this.branchOffice._id && e.Status == "ACTIVE" &&
+                                    this.fecha == date) {
                                     this.egresos.push({
                                         "Date": e.Date,
-                                        "Responsable": e.Employee.DNI,
+                                        "Responsable": e.Employee.User,
                                         "Monto": e.Monto,
                                         "Description": e.Description,
                                         "Type": "EGRESO",
@@ -162,24 +289,29 @@ export default {
                             })
                             this.egresos.forEach(e => {
                                 this.movimientos.push(e)
+                                this.allMovimientos.push(e)
                             });
                         }
                     }
                 })
         },
 
-        async getVentas(branchOffice) {
+        async getVentas() {
             await axios.get(urlAPI + 'sellVehicle')
                 .then(res => {
                     this.ventas = [];
                     let ventas = res.data.sell;
                     if (ventas != null) {
-                        if (branchOffice != "") {
+                        if (this.branchOffice != "") {
                             ventas.forEach(e => {
-                                if (e.BranchOffice != null && e.BranchOffice._id == branchOffice) {
+                                let date = "";
+                                if (e.Date != null) {
+                                    let date = String(e.Date).slice(0, 10);;
+                                }
+                                if (e.BranchOffice != null && e.BranchOffice._id == this.branchOffice._id && this.fecha == date) {
                                     this.ventas.push({
                                         "Date": e.Date,
-                                        "Responsable": e.Employee.DNI,
+                                        "Responsable": e.Employee.User,
                                         "Monto": e.Factura.PrecioNeto,
                                         "Description": "N/A",
                                         "Type": "INGRESO",
@@ -189,16 +321,14 @@ export default {
                             })
                             this.ventas.forEach(v => {
                                 this.movimientos.push(v)
+                                this.allMovimientos.push(v)
                             });
                         }
                     }
-
                 })
         },
 
         async getOrdenes(branchOffice) {
-            let fecha = new Date();
-            fecha = new Date(fecha.setTime(fecha.getTime()));
             await axios.get(urlAPI + 'purchaseOrder')
                 .then(res => {
                     this.ordenesR = [];
@@ -206,23 +336,24 @@ export default {
                     if (ordenesR != null) {
                         if (branchOffice != "") {
                             ordenesR.forEach(o => {
-                                let date = new Date(o.OrderDate);
-                                if (o.BranchOffice == branchOffice && o.Status == "ACTIVE" && date.getDate() ==
-                                    fecha.getDate() &&
-                                    date.getMonth() == fecha.getMonth() &&
-                                    date.getYear() == fecha.getYear()) {
+                                let date = "";
+                                if (o.OrderDate != null) {
+                                    date = String(o.OrderDate).slice(0, 10);
+                                }
+                                if (o.BranchOffice == branchOffice && o.Status == "ACTIVE" && o.Type == "RECIBIDA" && date == this.fecha) {
                                     this.ordenesR.push({
                                         "Date": o.OrderDate,
-                                        "Responsable": o.Employee.DNI,
+                                        "Responsable": o.Employee.User,
                                         "Monto": o.Price,
                                         "Description": "ORDEN DE COMPRA",
                                         "Type": "EGRESO",
-                                        "Motivo": "REPUESTOS"
+                                        "Motivo": "allMovimientos"
                                     })
                                 }
                             })
                             this.ordenesR.forEach(o => {
                                 this.movimientos.push(o)
+                                this.allMovimientos.push(o)
                             });
                         }
                     }
@@ -235,14 +366,12 @@ export default {
                     if (ordenes != null) {
                         if (branchOffice != "") {
                             ordenes.forEach(o => {
-                                let date = new Date(o.OrderDate);
-                                if (o.BranchOffice == branchOffice && o.Status == "ACTIVE" && date.getDate() ==
-                                    fecha.getDate() &&
-                                    date.getMonth() == fecha.getMonth() &&
-                                    date.getYear() == fecha.getYear()) {
+                                let date = String(o.Date).slice(0, 10);
+                                if (o.BranchOffice == branchOffice && o.Status == "ACTIVE" &&
+                                    o.Type == "RECIBIDA" && this.fecha == date) {
                                     this.ordenesV.push({
                                         "Date": o.OrderDate,
-                                        "Responsable": o.Employee.DNI,
+                                        "Responsable": o.Employee.User,
                                         "Monto": o.Price,
                                         "Description": "ORDEN DE COMPRA",
                                         "Type": "EGRESO",
@@ -252,10 +381,41 @@ export default {
                             })
                             this.ordenesV.forEach(o => {
                                 this.movimientos.push(o)
+                                this.allMovimientos.push(o)
                             });
                         }
                     }
                 })
+        },
+
+        async getIngresos() {
+            await axios.get(urlAPI + 'ingreso')
+                .then(res => {
+                    this.ingresos = [];
+                    let ingresos = res.data.ingreso;
+                    if (ingresos != null) {
+                        if (this.branchOffice != "") {
+                            ingresos.forEach(o => {
+                                let date = String(o.Date).slice(0, 10);
+                                if (o.BranchOffice == this.branchOffice._id && this.fecha == date) {
+                                    this.ingresos.push({
+                                        "Date": o.Date,
+                                        "Responsable": o.Employee.User,
+                                        "Monto": o.Monto,
+                                        "Description": "N/A",
+                                        "Type": "INGRESO",
+                                        "Motivo": "SALDO INICIAL"
+                                    })
+                                }
+                            })
+                            this.ingresos.forEach(o => {
+                                this.movimientos.push(o)
+                                this.allMovimientos.push(o)
+                            });
+                        }
+                    }
+                })
+
         },
 
         async getEmpleados() {
@@ -264,8 +424,10 @@ export default {
                     let empleados = res.data.employee;
                     if (empleados != null) {
                         empleados.forEach(s => {
-                            if (s.Status === "ACTIVE" & s.BranchOffice._id == this.employee.BranchOffice) {
-                                this.empleados.push(s);
+                            if (s.Status === "ACTIVE" & s.BranchOffice != null) {
+                                if (s.BranchOffice._id == this.employee.BranchOffice) {
+                                    this.empleados.push(s);
+                                }
                             }
                         })
                     }
@@ -286,14 +448,7 @@ export default {
             if (date == null) {
                 return "N/A";
             }
-            date = new Date(date);
-            let dia = this.formatStringDate(date.getDate());
-            let hs = this.formatStringDate(date.getHours());
-            let min = this.formatStringDate(date.getMinutes());
-            let seg = this.formatStringDate(date.getSeconds());
-
-            date = (dia + "-" + (parseInt(date.getMonth() + 1)) + "-" + (date.getYear() + 1900) + " " + hs + ":" + min + ":" + seg);
-            return date;
+            return date.slice(11, 19);
         },
 
         formatStringDate(value) {
@@ -307,6 +462,45 @@ export default {
         formatPrice(value) {
             return value == null ? "$0" : "$" + value;
         },
+
+        mostrarDialog() {
+            if (this.caja == 'ABIERTA') {
+                this.mensaje = "¿Está seguro de que deseas cerrar la caja?";
+                this.dialogMensaje = true;
+            } else {
+                this.mensaje = "¿Está seguro de que deseas abrir la caja?";
+                this.dialogMensaje = true;
+            }
+        },
+
+        cambiarCaja() {
+            if (this.caja == 'ABIERTA') {
+                this.caja = 'CERRADA';
+            } else {
+                this.caja = 'ABIERTA';
+                localStorage.setItem('caja', 'ABIERTA');
+            }
+            let dateString = new Date().toLocaleString("es-AR", {
+                timeZone: "America/Argentina/Buenos_Aires"
+            });
+            //16/12/2020 11:51:28 -> 16-12-2020 11:51:28
+            let fecha = dateString.replaceAll("/", "-");
+
+            let change = {
+                "Employee": this.employee._id,
+                "Date": fecha,
+                "Description": "CAJA: " + this.caja
+            }
+            let arrChange = this.branchOffice.ChangeStatus == null || this.branchOffice.ChangeStatus != null && this.branchOffice.ChangeStatus.length == 0 ? arrChange = [] : this.branchOffice.ChangeStatus;
+            arrChange.push(change);
+            axios.post(urlAPI + 'branchOffice/' + this.branchOffice._id + '/setCaja', {
+                "Caja": this.caja
+            });
+            axios.post(urlAPI + 'branchOffice/' + this.branchOffice._id + '/changeStatus', arrChange);
+
+            this.mensaje = "";
+            this.dialogMensaje = false;
+        }
     },
 
 };

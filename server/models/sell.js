@@ -12,7 +12,7 @@ var sellSchema = new Schema({
   Employee: {type: Schema.Types.ObjectId,  ref: 'Employee'},
   Service: [{type: Schema.Types.ObjectId, ref: 'Service'}],
   ProductStock: [{type: Schema.Types.ObjectId, ref: 'ProductStock'}],
-  VehicleSold: [ {type: Schema.Types.ObjectId, ref: 'DeliveryVehicle'}],
+  VehicleSold: [{type: Schema.Types.ObjectId, ref: 'DeliveryVehicle'}],
  /* VehicleSold: [{
       VehicleStock: {type: Schema.Types.ObjectId, ref: 'VehicleStock'},
       PurchaseOrderV: {type: Schema.Types.ObjectId, ref: 'PurchaseOrderV'}
@@ -35,7 +35,7 @@ var sellSchema = new Schema({
       Holder: {type: String}
     }}],
     BranchOffice: {type: Schema.Types.ObjectId, ref: 'BranchOffice'},
-    WorkOrder: {type: Schema.Types.ObjectId, ref: 'WorkOrder'}
+    Reservation: {type: Schema.Types.ObjectId, ref: 'Reservation'}
 },{timestamps: true});
 
 var sell = mongoose.model("Sell", sellSchema);
