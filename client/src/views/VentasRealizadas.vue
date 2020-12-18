@@ -15,11 +15,11 @@
             </v-toolbar>
         </template>
 
-        <template v-if="Factura!=null" v-slot:item.Factura.PrecioNeto="{ item }">
-            {{ formatPrice(item.Factura.PrecioNeto) }}
-        </template>   
           <template v-slot:item.Date="{ item }">
             {{ formatDate(item.Date) }}
+        </template>     
+         <template v-slot:item.Factura.PrecioNeto="{ item }">
+            {{ formatPrice(item.Factura.PrecioNeto) }}
         </template>     
     </v-data-table>
 
@@ -220,7 +220,8 @@ export default {
             let cont = 0;
             await axios.get(urlAPI + "sellVehicle")
                 .then(res => {
-                    this.ventas = res.data.sell;});
+                    this.ventas = res.data.sell;
+                    });
         },
          formatPrice(value) {
             return value == null ? "$0" : "$" + value;

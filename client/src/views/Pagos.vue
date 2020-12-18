@@ -137,7 +137,7 @@
             </v-card-title>
 
             <v-card-text>
-                <v-container>
+                <v-container v-if="Factura.Elements!=null">
                     <ol>
                         <li v-for="(elemento,index) in Factura.Elements" :key="index">
                             <v-row>
@@ -157,7 +157,7 @@
                                     </strong>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-text-field disabled :value="elemento.PrecioNeto" prefix="$"></v-text-field>
+                                    <v-text-field v-if="elemento!=null && Factura!=null" disabled :value="elemento.PrecioNeto" prefix="$"></v-text-field>
                                 </v-col>
                             </v-row>
                             <div v-if="elemento.Descuento>0">
