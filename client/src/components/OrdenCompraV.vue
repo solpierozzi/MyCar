@@ -282,7 +282,7 @@ export default {
                                 this.allOrdenes.push(orden);
                             }
                         })
-                        this.ordenes = this.allOrdenes.filter(o => o.Type == "RECIBIDA")
+                        this.ordenes = this.allOrdenes.filter(o => o.Type == "RECIBIDA" && o.Code!=null)
                     }
                 })
         },
