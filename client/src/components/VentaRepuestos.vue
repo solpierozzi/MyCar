@@ -12,12 +12,12 @@
         </template>
         <template v-slot:[`item.actions`]="{ item }">
             <div v-if="caja=='ABIERTA'">
-                <v-btn v-if="item.carrito == false" fab small color="success">
-                    <v-icon class="text-center" @click="agregarAlCarrito(item)">
+                <v-btn v-if="item.carrito == false" fab small color="success"  @click="agregarAlCarrito(item)">
+                    <v-icon class="text-center">
                         mdi-cart-plus</v-icon>
                 </v-btn>
-                <v-btn v-else fab small color="error">
-                    <v-icon class="text-center" @click="eliminarDelCarrito(item)">
+                <v-btn v-else fab small color="error" @click="eliminarDelCarrito(item)">
+                    <v-icon class="text-center" >
                         mdi-cart-remove</v-icon>
                 </v-btn>
             </div>
@@ -146,19 +146,27 @@ export default {
     },
     methods: {
 
-        getCaja() {
+       getCaja() {
             axios.get(urlAPI + 'branchOffice').then(res => {
                 if (res != null) {
                     let branchOffice = res.data.branchOffice;
-                    
                     branchOffice = branchOffice.find(b => b._id == this.employee.BranchOffice);
                     if (branchOffice != null) {
-                        this.caja = branchOffice.Caja;
-                    }
+                        if(branchOffice.Caja==null){
+                            this.caja="CERRADA";
+                        }
+                        else{
+                            if(branchOffice.Caja.Estado==null){
+                                this.caja="CERRADA";
+                            }
+                            else{
+                                  this.caja = branchOffice.Caja.Estado;
+                            }
+                        }
+                  }
                 }
             })
         },
-
         cancelarCantidad() {
             this.eliminarDelCarrito(this.ultimoEnCarrito);
             this.dialogCantidad = false;

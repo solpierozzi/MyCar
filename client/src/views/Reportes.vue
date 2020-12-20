@@ -9,16 +9,11 @@
                 <v-card-title>Ingresos</v-card-title>
                 <v-card-text class="pt-0">
                 
-                    <h1 class="cardValue">$ 19.5K</h1>
-                
-                <v-divider class="my-2"></v-divider>
-                <v-icon
-                    class="mr-2"
-                    small
-                >
-                    mdi-clock
-                </v-icon>
-                <span class="caption grey--text font-weight-light">Actualizado hace {{tiempoCard1}} segundos</span>
+                    <h1 class="cardValue">$ {{totalIncomes.toFixed(2)}}M</h1>
+
+               <v-divider class="my-2"></v-divider>
+                <span class="caption grey--text font-weight-light">Periodo: Mes actual</span>
+
                 </v-card-text>
             </v-card>
         </v-col>
@@ -29,16 +24,12 @@
                 <v-card-title>Egresos</v-card-title>
                 <v-card-text class="pt-0">
                 
-                    <h1 class="cardValue">$ 12.2K</h1>
+                    <h1 class="cardValue">$ {{totalExpenses.toFixed(2)}}M</h1>
+
                 
                 <v-divider class="my-2"></v-divider>
-                <v-icon
-                    class="mr-2"
-                    small
-                >
-                    mdi-clock
-                </v-icon>
-                <span class="caption grey--text font-weight-light">Actualizado hace {{tiempoCard2}} segundos</span>
+                <span class="caption grey--text font-weight-light">Periodo: Mes actual</span>
+
                 </v-card-text>
             </v-card>
         </v-col>
@@ -46,42 +37,20 @@
             <v-card
                 class="mt-4 mx-auto"
             >
-                <v-card-title>Extra</v-card-title>
+                <v-card-title>Mejor vendedor</v-card-title>
                 <v-card-text class="pt-0">
                 
-                    <h1 class="cardValue">Valor</h1>
+                    <h1 class="cardValue">{{bestSellerName}}</h1>
+
+                <div class="subheading font-weight-light grey--text">
+                    <b>Total vendido: ${{bestSellerTotal}}</b>
+                </div>
                 
                 <v-divider class="my-2"></v-divider>
-                <v-icon
-                    class="mr-2"
-                    small
-                >
-                    mdi-clock
-                </v-icon>
-                <span class="caption grey--text font-weight-light">Actualizado hace {{tiempoCard2}} segundos</span>
+                <span class="caption grey--text font-weight-light">Periodo: Mes actual</span>
                 </v-card-text>
             </v-card>
-        </v-col>
-        <v-col cols="12" md="3">
-            <v-card
-                class="mt-4 mx-auto"
-            >
-                <v-card-title>Extra</v-card-title>
-                <v-card-text class="pt-0">
-                
-                    <h1 class="cardValue">Valor</h1>
-                
-                <v-divider class="my-2"></v-divider>
-                <v-icon
-                    class="mr-2"
-                    small
-                >
-                    mdi-clock
-                </v-icon>
-                <span class="caption grey--text font-weight-light">Actualizado hace {{tiempoCard2}} segundos</span>
-                </v-card-text>
-            </v-card>
-        </v-col>
+        </v-col>       
     </v-row>
     <v-row class="row-reports">
         <v-col cols="12" md="4">
@@ -96,7 +65,7 @@
                 max-width="calc(100% - 10px)"
                 >
                 <div class="chart">   
-                    <BarChart/>
+                    <BarChart :labelsList="['Label3','Label3','Label3']" />
                 </div>
                 </v-sheet>
             </v-container>
@@ -106,17 +75,8 @@
                 <div class="title font-weight-light mb-2">
                     Ingresos/Egresos
                 </div>
-                <div class="subheading font-weight-light grey--text">
-                    Last Campaign Performance
-                </div>
                 <v-divider class="my-2"></v-divider>
-                <v-icon
-                    class="mr-2"
-                    small
-                >
-                    mdi-clock
-                </v-icon>
-                <span class="caption grey--text font-weight-light">Actualizado hace {{tiempoCard4}} segundos</span>
+                <span class="caption grey--text font-weight-light">Valores del mes actual</span>
                 </v-card-text>
             </div>
             </v-card>
@@ -144,17 +104,8 @@
                 <div class="title font-weight-light mb-2">
                     Ingresos/Egresos por tipo
                 </div>
-                <div class="subheading font-weight-light grey--text">
-                    Last Campaign Performance
-                </div>
                 <v-divider class="my-2"></v-divider>
-                <v-icon
-                    class="mr-2"
-                    small
-                >
-                    mdi-clock
-                </v-icon>
-                <span class="caption grey--text font-weight-light">Actualizado hace {{tiempoCard4}} segundos</span>
+                <span class="caption grey--text font-weight-light">Valores del mes actual</span>
                 </v-card-text>
             </div>
             </v-card>
@@ -180,19 +131,10 @@
             <div class="card-text">
                 <v-card-text class="pt-0">
                 <div class="title font-weight-light mb-2">
-                    Ingresos/Egresos por tipo
-                </div>
-                <div class="subheading font-weight-light grey--text">
-                    Last Campaign Performance
+                    Ingresos/Egresos por tipo <b>intersucursal</b> 
                 </div>
                 <v-divider class="my-2"></v-divider>
-                <v-icon
-                    class="mr-2"
-                    small
-                >
-                    mdi-clock
-                </v-icon>
-                <span class="caption grey--text font-weight-light">Actualizado hace {{tiempoCard4}} segundos</span>
+                <span class="caption grey--text font-weight-light">Valores del mes actual</span>
                 </v-card-text>
             </div>
             </v-card>
@@ -209,6 +151,8 @@
 import BarChart from '@/components/BarChart.vue';
 import StackedChart from '@/components/StackedChart.vue';
 import PieChart from '@/components/PieChart.vue';
+import axios from "axios";
+import urlAPI from "../config/config.js"
 export default {
     components:{
         BarChart,
@@ -216,35 +160,43 @@ export default {
         StackedChart
     },
     data: () => ({
-        tiempoCard1: 0,
-        tiempoCard2: 0,
-        tiempoCard3: 0,
-        tiempoCard4: 0,
-        tiempoCard5: 0,
-        tiempoCard6: 0,
-        labels: [
-        '12am',
-        '3am',
-        '6am',
-        '9am',
-        '12pm',
-        '3pm',
-        '6pm',
-        '9pm',
-        '9pm',
-      ],
-      value: [
-        200,
-        675,
-        410,
-        390,
-        310,
-        460,
-        250,
-        240,
-        120
-      ],
-    })
+        totalIncomes: 0,
+        totalExpenses: 0,
+        bestSellerName: "",
+        bestSellerTotal: "",
+    }),
+    mounted() {
+        this.getValues()
+    },
+    methods: {
+         getValues(){
+            let date = new Date();
+            date.setDate(date.getDate() -  date.getDate()+1);
+            axios.post(urlAPI + 'report/incomeExpenses',{
+              "dateStart": date,
+              "dateFinish": new Date()
+         })
+         .then(data => {
+             data.data.income.forEach( branch => {
+                 this.totalIncomes += branch.money})
+            if(data.data.expenses.length > 0){
+             data.data.expenses.forEach( branchExpenses => this.totalExpenses += branchExpenses.money)
+            }
+             this.totalIncomes /= 1000000;
+             this.totalExpenses /= 1000000;
+         })
+
+         axios.post(urlAPI + 'report/bestSeller',{
+              "dateStart": date,
+              "dateFinish": new Date()
+         })
+         .then(data => 
+         {
+             this.bestSellerName = data.data.bestSeller.name + " " + data.data.bestSeller.lastName
+             this.bestSellerTotal = data.data.bestSeller.sells
+         })
+         }
+    }
 }
 </script>
 
@@ -266,6 +218,7 @@ export default {
 .bkg-reportes{
     background-color: #d3d3d3;
     height: 100vh;
+    padding: 20px;
 }
 .row-reports{
     padding-top: 3%;

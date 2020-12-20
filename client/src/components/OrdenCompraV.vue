@@ -69,12 +69,12 @@
                             <ul>
                                 <li v-for="(vehiculo, r) in selected[0].Vehicle" :key="r">
 
-                                    <v-text-field disabled :value="'Marca: '+vehiculo.VehicleID.Brand"></v-text-field>
-                                    <v-text-field disabled :value="' Modelo: '+vehiculo.VehicleID.Model"></v-text-field>
-                                    <v-text-field disabled :value="'Año: '+vehiculo.VehicleID.year"></v-text-field>
-                                    <v-text-field disabled :value="'Color: '+vehiculo.Color"></v-text-field>
-                                    <v-text-field disabled :value="'N° de Chasis: '+vehiculo.ChasisNum"></v-text-field>
-                                    <v-text-field disabled :value="'N° de Motor: '+vehiculo.EngineNum"></v-text-field>
+                                    <v-text-field readonly :value="'Marca: '+vehiculo.VehicleID.Brand"></v-text-field>
+                                    <v-text-field readonly :value="' Modelo: '+vehiculo.VehicleID.Model"></v-text-field>
+                                    <v-text-field readonly :value="'Año: '+vehiculo.VehicleID.year"></v-text-field>
+                                    <v-text-field readonly :value="'Color: '+vehiculo.Color"></v-text-field>
+                                    <v-text-field readonly :value="'N° de Chasis: '+vehiculo.ChasisNum"></v-text-field>
+                                    <v-text-field readonly :value="'N° de Motor: '+vehiculo.EngineNum"></v-text-field>
 
                                     <v-row>
                                         <v-radio-group mandatory class="text-align: left" v-model="recibidos[r]" row :rules="requerido">
@@ -282,7 +282,7 @@ export default {
                                 this.allOrdenes.push(orden);
                             }
                         })
-                        this.ordenes = this.allOrdenes.filter(o => o.Type == "RECIBIDA")
+                        this.ordenes = this.allOrdenes.filter(o => o.Type == "RECIBIDA" && o.Code!=null)
                     }
                 })
         },
@@ -291,14 +291,13 @@ export default {
             return value == null ? "$0" : "$" + value;
         },
 
-        formatDate(value) {
-            if (value == null) {
+         formatDate(value) {
+            if (value == null || new Date(value)==null) {
                 return "Sin Definir";
             }
-            value = String(value);
-            value = value.slice(0, 10);
-            return value;
-        },
+            let date = new Date(value);
+            return date.getDate()+"-"+date.getMonth()+"-"+(1900+date.getYear());
+           },
 
         validate() {
             return this.$refs.form.validate();
@@ -502,21 +501,18 @@ export default {
                 this.dialogMensaje = true;
                 return null;
             }
-            let date = new Date();
-            date = new Date(date.setTime(date.getTime()));
-
+    
             //ACA FALTA LA PARTE DE LA SUCURSAL    "BranchOffice": "5fb3d83987565231fcd5a756",
             return {
                 "purchaseOrderV": {
-                    "OrderDate": date,
                     "Price": precio,
                     "Vehicle": vehicle,
                     "Dealer": this.proveedor,
                     "Info": this.mensaje,
                     "Type": "RECIBIDA",
                     "Code": this.output[12][1],
-                    "Employee": this.employee._id
-
+                    "Employee": this.employee._id,
+                    "BranchOffice": this.employee.BranchOffice
                 }
             }
 

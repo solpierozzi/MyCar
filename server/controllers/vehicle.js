@@ -15,7 +15,7 @@ ctrl.index = (req, res) => {
 
 ctrl.create = (req, res) => {
     var body = req.body.vehicle;
-    console.log(req.body.vehicle);
+  //  console.log(req.body.vehicle);
     var vehicle = new Vehicle({
         Brand: body.Brand,
         Model: body.Model,
@@ -101,13 +101,13 @@ ctrl.indexStock = (req, res) => {
         })
     }).populate('Vehicle',(err, story) =>{
         if (err) {console.log(err)}
-        else {console.log(story)}
+        
     })
 };
 
 ctrl.createStock = (req, res) => {
     var body = req.body.vehicleStock;
-    console.log(req.body.vehicleStock);
+    //console.log(req.body.vehicleStock);
     var vehicleStock = new VehicleStock({
         ChasisNum: body.ChasisNum,
         EngineNum: body.EngineNum,
@@ -126,7 +126,7 @@ ctrl.createStock = (req, res) => {
     vehicleStock.save((err) => {
         if(err) {console.log(err)}
         res.send({
-            success: true
+            vehicleStock
         })
     });
 };
@@ -186,6 +186,30 @@ ctrl.removeStock = (req, res) => {
             if(!vehicleStock) {console.log(' no se encontro')}
             else {
                 vehicleStock.Status = 'NOT AVAILABLE';
+                if(ChangeStatus){
+                    vehicleStock.ChangeStatus.push(ChangeStatus);
+                }
+                vehicleStock.save((err) => {
+                    if(err) {console.log(err)}
+                    res.send({
+                        success: true
+
+                    })
+                });
+            }
+        }
+    })
+};
+
+ctrl.vender = (req, res) => {
+    var id = req.params.vehicleStock_id;
+    var ChangeStatus = req.body.ChangeStatus;
+    VehicleStock.findOne({_id: id}, (err, vehicleStock) => {
+        if(err) {console.log(err)}
+        else {
+            if(!vehicleStock) {console.log(' no se encontro')}
+            else {
+                vehicleStock.Status = 'SOLD';
                 if(ChangeStatus){
                     vehicleStock.ChangeStatus.push(ChangeStatus);
                 }

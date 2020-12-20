@@ -193,8 +193,18 @@ export default {
                     let branchOffice = res.data.branchOffice;
                     branchOffice = branchOffice.find(b => b._id == this.employee.BranchOffice);
                     if (branchOffice != null) {
-                        this.caja = branchOffice.Caja;
-                    }
+                        if(branchOffice.Caja==null){
+                            this.caja="CERRADA";
+                        }
+                        else{
+                            if(branchOffice.Caja.Estado==null){
+                                this.caja="CERRADA";
+                            }
+                            else{
+                                  this.caja = branchOffice.Caja.Estado;
+                            }
+                        }
+                  }
                 }
             })
         },
@@ -240,8 +250,10 @@ export default {
                     let empleados = res.data.employee;
                     if (empleados != null) {
                         empleados.forEach(s => {
-                            if (s.Status === "ACTIVE" & s.BranchOffice._id == this.employee.BranchOffice) {
+                            if (s.Status === "ACTIVE" & s.BranchOffice!=null){
+                            if(s.BranchOffice._id == this.employee.BranchOffice) {
                                 this.empleados.push(s);
+                            }
                             }
                         })
                     }

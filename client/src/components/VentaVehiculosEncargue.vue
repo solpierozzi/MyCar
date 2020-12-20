@@ -7,12 +7,12 @@
 
         <template v-slot:[`item.actions`]="{ item }">
             <div v-if="caja=='ABIERTA'">
-            <v-btn v-if="item.carrito == false" fab small color="success">
-                <v-icon class="text-center" @click="agregarAlCarrito(item);aplicarDescuento=true">
+            <v-btn v-if="item.carrito == false" fab small color="success" @click="agregarAlCarrito(item);aplicarDescuento=true">
+                <v-icon class="text-center" >
                     mdi-cart-plus</v-icon>
             </v-btn>
-            <v-btn v-else fab small color="error">
-                <v-icon class="text-center" @click="eliminarDelCarrito(item)">
+            <v-btn v-else fab small color="error" @click="eliminarDelCarrito(item)">
+                <v-icon class="text-center" >
                     mdi-cart-remove</v-icon>
             </v-btn>
             </div>
@@ -130,18 +130,27 @@ export default {
             this.getCaja();
         },
 
-           getCaja() {
-            axios.get(urlAPI+'branchOffice').then(res=>{
-                if(res!=null){
+         getCaja() {
+            axios.get(urlAPI + 'branchOffice').then(res => {
+                if (res != null) {
                     let branchOffice = res.data.branchOffice;
-                    branchOffice = branchOffice.find(b=>b._id == this.employee.BranchOffice);
-                    if(branchOffice!=null){
-                        this.caja = branchOffice.Caja;
-                    }
+                    branchOffice = branchOffice.find(b => b._id == this.employee.BranchOffice);
+                    if (branchOffice != null) {
+                        if(branchOffice.Caja==null){
+                            this.caja="CERRADA";
+                        }
+                        else{
+                            if(branchOffice.Caja.Estado==null){
+                                this.caja="CERRADA";
+                            }
+                            else{
+                                  this.caja = branchOffice.Caja.Estado;
+                            }
+                        }
+                  }
                 }
             })
         },
-
         async getVehiculos() {
             let vehiculos = [];
             let vehiculoAGuardar = {};
@@ -215,6 +224,7 @@ export default {
                     item.carrito = false;
                     this.descuento = 0;
                     item.descuento = 0;
+                    item.descontado = 0;
                     localStorage.setItem(String("vM" + seleccionado), JSON.stringify(item));
                 }
             }

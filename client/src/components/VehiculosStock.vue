@@ -48,7 +48,7 @@
             </template>
         </v-snackbar>
 
-        <v-dialog v-model="dialogNuevo" max-width="900px">
+        <v-dialog v-model="dialogNuevo" max-width="900px" persistent>
             <v-card>
                 <v-card-title>{{titulo}}</v-card-title>
                 <v-form ref="form" v-model="valid" lazy-validation>
@@ -319,9 +319,9 @@ export default {
         async getVehicleStock(branchOffice) {
             await axios.get(urlAPI + 'vehicleStock')
                 .then(res => {
-                    this.vehicleStock = res.data.vehicle;
-                    if (branchOffice != "") {
-                        this.vehicleStock = this.vehicleStock.filter(v => v.BranchOffice._id == branchOffice);
+                    let vehicleStock = res.data.vehicle;
+                    if (branchOffice != "" & vehicleStock != null) {
+                        this.vehicleStock = vehicleStock.filter(v => v.BranchOffice == branchOffice);
                     }
                 })
         },
@@ -396,10 +396,10 @@ export default {
             if (this.dialogNuevo) {
                 this.$refs.form.resetValidation();
             }
-            this.editedItem = this.defaultItem;
+            this.editedItem = Object.assign({}, this.defaultItem)
             this.vehicleStock = [];
             this.selected = [];
-            this.getVehicleStock(this.branchOffice == null ? "" : this.branchOffice);
+            this.getVehicleStock(this.branchOffice);
             this.nuevo = false;
             this.dialogNuevo = false;
         },

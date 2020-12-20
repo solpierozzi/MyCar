@@ -50,6 +50,7 @@ module.exports = app => {
     router.post('/client/:client_id/addvehicle', client.addVehicle);
     router.post('/client/:client_id/updatevehicle', client.updateVehicle);
     router.post('/client/:client_id/deletevehicle', client.deleteVehicle);
+    router.post('/client/:client_id/notifyEstimatedArrival', client.notifyEstimatedArrivalVehicle)
 
     router.get('/vehicle', vehicle.index);
     router.post('/vehicle/add', vehicle.create);
@@ -59,6 +60,7 @@ module.exports = app => {
     router.get('/vehiclestock', vehicle.indexStock);
     router.post('/vehiclestock/add', vehicle.createStock);
     router.post('/vehiclestock/:vehicleStock_id/update', vehicle.updateStock);
+    router.post('/vehiclestock/:vehicleStock_id/vender', vehicle.vender);
     router.delete('/vehiclestock/:vehicleStock_id/delete', vehicle.removeStock);
 
     router.get('/dealer', dealer.index);
@@ -169,7 +171,10 @@ module.exports = app => {
     router.post('/prueba/sellproduct', pruebas.sellProduct);
     router.post('/prueba/reporte', pruebas.reporte);
     router.post('/prueba/reporte2', pruebas.reporte2);
-    router.post('/prueba/reporte3', pruebas.reporte3);    
+    router.post('/prueba/reporte3', pruebas.reporte3);  
+    router.post('/prueba/reporte4', pruebas.reporte4);  
+    router.post('/prueba/reporte5', pruebas.reporte5);    
+
 
     router.get('/remainder', remainder.index);
     router.post('/remainder/add', remainder.create);
@@ -215,6 +220,8 @@ module.exports = app => {
 
 
     router.post('/report/incomeExpenses', report.IncomeExpenses);
+    router.post('/report/incomeDiscriminated', report.IncomeDiscriminated);
+    router.post('/report/bestSeller', report.BestSeller);
 
     
     router.get('/egreso', egreso.index);

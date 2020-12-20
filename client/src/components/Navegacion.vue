@@ -21,10 +21,6 @@
 
                 </template>
                 <v-list>
-                    <v-list-item link to="/configuracion">
-                        <v-list-item-title>Configuración</v-list-item-title>
-                    </v-list-item>
-
                     <v-list-item link @click="logout()">
                         <v-list-item-title>Salir</v-list-item-title>
                     </v-list-item>
@@ -46,7 +42,7 @@
                     <v-list-item-title>Inicio</v-list-item-title>
                 </v-list-item>
 
-                <v-list-item :to="'/reportes'">
+                <v-list-item v-if="validateUsers('Gerente')" :to="'/reportes'">
                     <v-list-item-icon>
                         <v-icon>mdi-chart-line</v-icon>
                     </v-list-item-icon>
