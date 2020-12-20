@@ -107,18 +107,27 @@ export default {
         }
     },
     methods: {
-        getCaja() {
+      getCaja() {
             axios.get(urlAPI + 'branchOffice').then(res => {
                 if (res != null) {
                     let branchOffice = res.data.branchOffice;
                     branchOffice = branchOffice.find(b => b._id == this.employee.BranchOffice);
                     if (branchOffice != null) {
-                        this.caja = branchOffice.Caja;
-                    }
+                        if(branchOffice.Caja==null){
+                            this.caja="CERRADA";
+                        }
+                        else{
+                            if(branchOffice.Caja.Estado==null){
+                                this.caja="CERRADA";
+                            }
+                            else{
+                                  this.caja = branchOffice.Caja.Estado;
+                            }
+                        }
+                  }
                 }
             })
         },
-
         iniciar() {
             this.getVehiculos();
             this.getCaja();
