@@ -215,6 +215,7 @@ export default {
                     item.carrito = false;
                     this.descuento = 0;
                     item.descuento = 0;
+                    item.descontado = 0;
                     localStorage.setItem(String("vM" + seleccionado), JSON.stringify(item));
                 }
             }

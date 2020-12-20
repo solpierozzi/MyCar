@@ -210,10 +210,14 @@ export default {
                 }
             })
         },
+        getStringDate(date){
+             let dateAux = new Date(date);
+            return dateAux!=null? dateAux.getDate()+"-"+(dateAux.getMonth()+1)+"-"+(dateAux.getYear()+1900): new Date().getDate()+"-"+(new Date().getMonth()+1)+"-"+(new Date().getYear()+1900);
+        },
 
         agregarEntrega(venta, vehiculo, color, delivery) {
-            let date = delivery.Date!=null? delivery.Date.slice(0,10): new Date().slice(0,10);
-         let empleado = this.empleados.find(e=>e._id==delivery.Employee);
+           let date = this.getStringDate(delivery.Date);
+             let empleado = this.empleados.find(e=>e._id==delivery.Employee);
                 this.entregas.push({
                     "Marca": vehiculo.Brand,
                     "Model": vehiculo.Model,
