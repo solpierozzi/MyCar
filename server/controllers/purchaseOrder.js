@@ -53,8 +53,9 @@ ctrl.create = async (req, res) => {
     
     purchaseOrder.save((err) => {
         if(err) {console.log(err)}
+        console.log(purchaseOrder);
         res.send({
-            success: true
+            purchaseOrder
         });
     });
 };
