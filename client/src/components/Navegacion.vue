@@ -21,10 +21,6 @@
 
                 </template>
                 <v-list>
-                    <v-list-item link to="/configuracion">
-                        <v-list-item-title>Configuración</v-list-item-title>
-                    </v-list-item>
-
                     <v-list-item link @click="logout()">
                         <v-list-item-title>Salir</v-list-item-title>
                     </v-list-item>

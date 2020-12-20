@@ -783,10 +783,8 @@ export default {
             this.mensaje = "Compra realizada con éxito";
             this.pago = true;
             this.descuento = 0;
-            console.log("ENCARGADOS LENGTH :"+this.encargados.length)
             for (let i = 0; i < this.encargados.length; i++) {
                 let item = JSON.parse(localStorage.getItem("vM" + i));
-                console.log("encargado: "+JSON.stringify(item))
                 if (item != null) {
                     item.carrito = false;
                     item.descuento = 0;
@@ -893,7 +891,10 @@ export default {
             for (let i = 0; i < length; i++) {
                 let repuesto = JSON.parse(localStorage.getItem(String("r" + i)));
                 if (repuesto != null && repuesto.carrito) {
-                    this.repuestos.push(repuesto);
+                    for(let j=0;j<repuesto.cantidad;j++){
+                        this.repuestos.push(repuesto);
+                    }
+                    
                 }
             }
         },
