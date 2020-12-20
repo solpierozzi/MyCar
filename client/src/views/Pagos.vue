@@ -146,7 +146,7 @@
                             <div v-if="elemento.Descuento>0">
                                 <v-text-field readonly :value="'Descuento: '+elemento.Descuento+'%'"></v-text-field>
                                 <v-text-field readonly :value="'Precio con Descuento: $'+elemento.PrecioConDescuento"></v-text-field>
-                                    
+                            </div>
 
                             <div v-if="Factura.Kind=='A'">
                                   <v-text-field readonly :value="'Impuestos: $'+elemento.PrecioConDescuento"></v-text-field>
