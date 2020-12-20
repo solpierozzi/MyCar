@@ -487,7 +487,12 @@ export default {
             if (date == null) {
                 return "N/A";
             }
-            return date.slice(11, 19);
+            let dateAux = new Date(date);
+            let horas = dateAux.getHours()<10? "0"+dateAux.getHours() : dateAux.getHours();
+            let min = dateAux.getMinutes()<10? "0"+dateAux.getMinutes() : dateAux.getMinutes();       
+            let seg = dateAux.getSeconds()<10? "0"+dateAux.getSeconds() : dateAux.getSeconds();
+            date = horas+":"+min+":"+seg;
+            return date;
         },
 
         formatStringDate(value) {
