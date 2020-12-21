@@ -673,7 +673,12 @@ export default {
                     }
                 }
                 this.editedItem.Number = item.Address.Number;
-                this.editedItem.employee = item.Employee;
+                if(item.Employee!=null){
+                    item.Employee.forEach(e=>{
+                        this.editedItem.employee.push(e);
+                    })
+                }
+               // this.editedItem.employee = item.Employee;
                 this.editedItem.taller = item.WorkShop;
 
                 this.timeOLunes = item.Hours.Monday.Open;
@@ -929,7 +934,6 @@ export default {
                                 Employee: this.editedItem.employee
                             });
                             this.sucursales.push(item);
-                            this.reset();
                         }
                     });
                 }
@@ -937,7 +941,7 @@ export default {
                 else {
                     Object.assign(this.sucursales[this.editedIndex], item);
                     this.asignarSucursal({
-                        Sucursal: item._id,
+                        Sucursal: this.selected[0]._id,
                         Employee: this.editedItem.employee
                     });
                     let jsonSucursal = this.getJSONSucursal(this.editedItem, "ACTIVE");
@@ -951,11 +955,39 @@ export default {
         },
 
         asignarSucursal(item) {
-            item.Employee.forEach(e => {
-                axios.post(urlAPI + 'employee/' + e + '/asignarSucursal', {
+
+            for(let i= 0; i< this.empleados.length; i++){
+                let employee = item.Employee.find(e=> this.empleados[i]._id == e);
+                if(employee!=null && employee!=undefined){
+                       axios.post(urlAPI + 'employee/' + this.empleados[i]._id+ '/asignarSucursal', {
                     "sucursal": item.Sucursal
-                });
-            })
+                }).then(res=>{
+                    if(res!=null & i==this.empleados.length-1){
+                        this.reset();
+                    }
+                })       
+                }
+                else{
+                    if(this.empleados[i].BranchOffice!=null && this.empleados[i].BranchOffice._id == item.Sucursal){
+                       axios.post(urlAPI + 'employee/' + this.empleados[i]._id+ '/asignarSucursal', {
+                    "sucursal": null
+                }).then(res=>{
+                    if(res!=null & i==this.empleados.length-1){
+                        this.reset();
+                    }
+                })       
+                }
+                }
+            }           
+            /*for(let i=0;i< item.Employee.length; i++){
+                axios.post(urlAPI + 'employee/' + item.Employee[i]+ '/asignarSucursal', {
+                    "sucursal": item.Sucursal
+                }).then(res=>{
+                    if(res!=null & i==item.Employee.length-1){
+                        this.reset();
+                    }
+                })
+            }*/
         },
 
         formatTaller(value) {
