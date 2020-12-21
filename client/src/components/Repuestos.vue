@@ -354,11 +354,13 @@ export default {
             },
             {
                 text: 'Precio última Compra',
-                value: 'LastPurchasePrice'
+                value: 'LastPurchasePrice',
+                align: 'right'
             },
             {
                 text: 'Precio Venta',
-                value: 'SalePrice'
+                value: 'SalePrice',
+                align: 'right'
             },
             {
                 text: 'Proveedor',

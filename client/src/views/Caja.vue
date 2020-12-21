@@ -52,7 +52,7 @@
             <template v-slot:item.Date="{ item }">
                 {{ formatDate(item.Date) }}
             </template>
-            <template v-slot:item.Monto="{ item }">
+            <template v-slot:item.Monto="{ item }" class="text-right">
                 {{ formatPrice(item.Monto) }}
             </template>
             <template v-slot:item.Description="{ item }">
@@ -155,6 +155,7 @@ export default {
             {
                 text: 'Monto',
                 value: 'Monto',
+                align: 'right'
             },
             {
                 text: 'Tipo',
@@ -572,12 +573,7 @@ export default {
     margin-right: 3px;
 }
 
-.btnMasMenos {
-    margin: -10%;
-}
-
-.izq {
-    align: left;
-    margin-left: -90%;
+.right {
+    text-align: right;
 }
 </style>

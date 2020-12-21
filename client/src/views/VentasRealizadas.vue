@@ -123,6 +123,7 @@ export default {
             {
                 text: 'Total Neto',
                 value: 'Factura.PrecioNeto',
+                align: 'right'
             },
          
         ],

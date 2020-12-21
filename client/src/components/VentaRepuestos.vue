@@ -115,6 +115,7 @@ export default {
             {
                 text: 'Precio',
                 value: 'Product.SalePrice',
+                align: 'right'
             },
 
             {

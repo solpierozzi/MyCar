@@ -90,6 +90,7 @@ export default {
             {
                 text: 'Precio',
                 value: 'PurchasedPrice',
+                align: 'right'
             },
             {
                 text: 'Acciones',

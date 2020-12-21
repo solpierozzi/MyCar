@@ -108,6 +108,7 @@ export default {
             {
                 text: 'Precio',
                 value: 'SuggestedPrice',
+                align: 'right'
             },
             {
                 text: 'Acciones',

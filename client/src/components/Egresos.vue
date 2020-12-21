@@ -136,6 +136,7 @@ export default {
             {
                 text: 'Monto',
                 value: 'Monto',
+                align: 'right'
             },
             {
                 text: 'Tipo',

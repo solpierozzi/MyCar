@@ -197,6 +197,7 @@ export default {
             {
                 text: 'Precio',
                 value: 'Price',
+                align: 'right'
             },
         ],
 
