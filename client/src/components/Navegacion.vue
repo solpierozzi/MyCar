@@ -98,6 +98,12 @@
                         </v-list-item-icon>
                         <v-list-item-title>Conf. Mails</v-list-item-title>
                     </v-list-item>
+                    <v-list-item :to="'/Proveedores'">
+                        <v-list-item-icon>
+                            <v-icon>mdi-car</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Proveedores</v-list-item-title>
+                    </v-list-item>
                     <v-list-item v-if="validateUsers('Supervisor','Supervisor Taller', 'Gerente','Administrador')" :to="'/empleados'">
                         <v-list-item-icon>
                             <v-icon>mdi-account-tie </v-icon>
