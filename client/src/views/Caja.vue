@@ -267,6 +267,7 @@ export default {
         getCaja() {
             axios.get(urlAPI + 'branchOffice').then(res => {
                 this.saldoInicial =0;
+                this.movimientos = [];
                 this.saldoEnCaja=0;
                 if (res != null) {
                     let branchOffice = res.data.branchOffice;
@@ -279,11 +280,9 @@ export default {
                             else{
                                 this.caja = branchOffice.Caja.Estado;
                             }
-                            if(this.saldoInicial==0){
-                                if(branchOffice.SaldoInicial!=null && branchOffice.Caja.Date == this.fecha){
-                                    this.saldoEnCaja = branchOffice.Caja.SaldoInicial;
+                            if(branchOffice.Caja.SaldoInicial!=null && branchOffice.Caja.Date == this.fecha){
+                                    this.saldoEnCaja += branchOffice.Caja.SaldoInicial;
                                     this.saldoInicial+=this.saldoEnCaja;
-                                }
                             }
                         }
                         this.branchOffice = branchOffice;
@@ -488,7 +487,21 @@ export default {
             if (date == null) {
                 return "N/A";
             }
+
             let dateAux = new Date(date);
+            if(String(dateAux).includes("Invalid")){
+                let fecha = String(date);
+                let nD = new Date();
+                if(fecha.length<19){
+                        let horas = nD.getHours()<10? "0"+nD.getHours() : nD.getHours();
+                        let min = nD.getMinutes()-1<10? "0"+nD.getMinutes()-1 : nD.getMinutes()-1;       
+                        let seg = nD.getSeconds()<10? "0"+nD.getSeconds() : nD.getSeconds();
+                        return horas+":"+min+":"+seg;
+                }   
+                return fecha.slice(11,19);
+            }
+            console.log(dateAux)
+            console.log(date)
             let horas = dateAux.getHours()<10? "0"+dateAux.getHours() : dateAux.getHours();
             let min = dateAux.getMinutes()<10? "0"+dateAux.getMinutes() : dateAux.getMinutes();       
             let seg = dateAux.getSeconds()<10? "0"+dateAux.getSeconds() : dateAux.getSeconds();
@@ -530,7 +543,7 @@ export default {
                 timeZone: "America/Argentina/Buenos_Aires"
             });*/
             //16/12/2020 11:51:28 -> 16-12-2020 11:51:28
-
+            //this.saldoInicial+=this.saldoEnCaja;
             let change = {
                 "Employee": this.employee._id,
                 "Date": this.fecha,
