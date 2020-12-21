@@ -163,7 +163,7 @@
             </template>
         </v-data-table>
 
-        <v-dialog ref="asociarVehiculo" v-model="nuevoVehiculo">
+        <v-dialog ref="asociarVehiculo" v-model="nuevoVehiculo" persistent  max-width="800px">
             <v-card>
                 <v-card-title>Asociar Vehículo</v-card-title>
                 <v-card-text>
@@ -175,8 +175,7 @@
                     <v-text-field label="Dominio" :rules="reglaDominio" v-model="vehiculoNuevo.Domain"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-flex class="text-rigth">
+                    <v-flex class="text-right">
                         <v-btn class="info mb-2" text @click="vehiculoNuevo.Domain='';vehiculoNuevo.VehicleID='',nuevoVehiculo=false">
                             <v-icon>mdi-cancel</v-icon>
                         </v-btn>
@@ -184,7 +183,6 @@
                             <v-icon>mdi-check</v-icon>
                         </v-btn>
                     </v-flex>
-                    <v-spacer></v-spacer>
                 </v-card-actions>
             </v-card>
         </v-dialog>
